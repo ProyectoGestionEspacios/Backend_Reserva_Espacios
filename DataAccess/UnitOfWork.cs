@@ -1,4 +1,7 @@
-﻿using Entities.DataContext;
+﻿using DataAccess.Repos;
+using Entities.Auth;
+using Entities.DataContext;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +13,17 @@ namespace DataAccess
     public class UnitOfWork : IUnitOfWork
     {
         public DataBaseContext Context { get; }
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UnitOfWork(DataBaseContext context)
+
+        public UnitOfWork(DataBaseContext context, UserManager<ApplicationUser> userManager)
         {
             Context = context;
+            _userManager = userManager;
         }
+
+        public IUserRepository UserRepository => new UserRepository(_userManager);
+
 
         public void Commit()
         {

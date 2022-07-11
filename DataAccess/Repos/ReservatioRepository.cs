@@ -57,6 +57,8 @@ namespace DataAccess.Repos
 
 
         }
+
+       
         public async Task<Reservation> Create(Reservation reservation)
         {
             var user = _dataBaseContext.Users.Where(x => x.Id == reservation.UserId).FirstOrDefault();
@@ -89,6 +91,14 @@ namespace DataAccess.Repos
 
                     if ((user.Company == "bitwork" && workSpace.Company == "bitwork") || (user.Company == "marketing" && workSpace.Company == "marketing"))
                     {
+                        if (now.DayOfWeek == DayOfWeek.Thursday)
+                        {
+                            if (days < 5 && days > 3 || days < 2 && days > 0)
+                            {
+                                _dataBaseContext.Add(reservation);
+                                await _dataBaseContext.SaveChangesAsync();
+                            }
+                        }
                         if (now.DayOfWeek == DayOfWeek.Friday)
                         {
                             if (days < 5 && days > 2)
@@ -114,7 +124,7 @@ namespace DataAccess.Repos
                             }
                         }
                     }
-                    else if (user.Company == "Bravent")
+                    else if (user.Company == "bravent")
                     {
                         if (now.DayOfWeek == DayOfWeek.Friday)
                         {
@@ -149,6 +159,6 @@ namespace DataAccess.Repos
             return reservation;
         }
 
-
+       
     }
 }

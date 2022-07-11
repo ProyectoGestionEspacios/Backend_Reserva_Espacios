@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entities.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    [Migration("20220707174105_initial")]
+    [Migration("20220710102228_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -120,7 +120,7 @@ namespace Entities.Migrations
                     b.Property<DateTime>("EndHour")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("StarHour")
+                    b.Property<DateTime>("StartHour")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")

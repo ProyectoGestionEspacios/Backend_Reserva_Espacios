@@ -2,6 +2,7 @@
 using DataAccess.Repos;
 using Entities;
 using Gestion_Reservas_Espacios.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SendGrid;
@@ -10,6 +11,7 @@ using System.Security.Claims;
 
 namespace Gestion_Reservas_Espacios.Controller
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MeetingController : ControllerBase
@@ -53,7 +55,7 @@ namespace Gestion_Reservas_Espacios.Controller
 
                 var createMeeting = new Meeting
                 {
-                    StarHour = meeting.StartHour,
+                    StartHour = meeting.StartHour,
                     EndHour = meeting.EndHour,
                     Description = meeting.Description,
                     UserId = userId
@@ -61,26 +63,27 @@ namespace Gestion_Reservas_Espacios.Controller
 
 
                 var newReserved = await _meetingRepository.Create(createMeeting);
+                if (newReserved.User != null)
+                {
 
-
-                //Envio email
-                string fromEmail = _configuration.GetSection("SendGridEmailSettings")
+                    //Envio email
+                    string fromEmail = _configuration.GetSection("SendGridEmailSettings")
             .GetValue<string>("FromEmail");
 
-                string fromName = _configuration.GetSection("SendGridEmailSettings")
-                .GetValue<string>("FromName");
+                    string fromName = _configuration.GetSection("SendGridEmailSettings")
+                    .GetValue<string>("FromName");
 
-                var msg = new SendGridMessage()
-                {
-                    From = new EmailAddress(fromEmail, fromName),
-                    Subject = "Reserva Bravent",
-                    PlainTextContent = "Confirmamos que su reserva se ha completado correctamente."
-                };
-                msg.AddTo(newReserved.User.Email);
-                var response = await _sendGridClient.SendEmailAsync(msg);
-                string message = response.IsSuccessStatusCode ? "Email Send Successfully" :
-                "Email Sending Failed";
-
+                    var msg = new SendGridMessage()
+                    {
+                        From = new EmailAddress(fromEmail, fromName),
+                        Subject = "Reserva Bravent",
+                        PlainTextContent = "Confirmamos que su reserva se ha completado correctamente."
+                    };
+                    msg.AddTo(newReserved.User.Email);
+                    var response = await _sendGridClient.SendEmailAsync(msg);
+                    string message = response.IsSuccessStatusCode ? "Email Send Successfully" :
+                    "Email Sending Failed";
+                }
 
                 return CreatedAtAction(nameof(Get), new { id = newReserved.Id }, newReserved);
             }
@@ -93,7 +96,7 @@ namespace Gestion_Reservas_Espacios.Controller
 
         }
 
-        [HttpDelete]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
             var deleted = await _genericRepository.DeleteAsync(x => x.Id == id);

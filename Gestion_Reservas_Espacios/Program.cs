@@ -107,6 +107,8 @@ builder.Services.AddCors(options =>
         builder.WithOrigins("http://localhost:4200")
     .AllowAnyMethod()
     .AllowAnyHeader();
+    
+
     });
 });
 
@@ -124,6 +126,12 @@ using (var scope = app.Services.CreateScope())
 
 
 
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseHttpsRedirection();
 //if (!app.Environment.IsDevelopment())
@@ -131,12 +139,6 @@ app.UseHttpsRedirection();
 //    app.UseExceptionHandler("/error");
 //}
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 
 

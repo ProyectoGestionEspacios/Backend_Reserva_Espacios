@@ -179,7 +179,7 @@ namespace Entities.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    StarHour = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StartHour = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndHour = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },

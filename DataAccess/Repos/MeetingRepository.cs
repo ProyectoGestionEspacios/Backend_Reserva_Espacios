@@ -28,7 +28,7 @@ namespace DataAccess.Repos
                           select new Meeting
                           {
                               Id = meeting.Id,
-                              StarHour = meeting.StarHour,
+                              StartHour = meeting.StartHour,
                               EndHour = meeting.EndHour,
                               UserId = meeting.UserId,
                               User = user,
@@ -43,7 +43,7 @@ namespace DataAccess.Repos
                           select new Meeting
                           {
                               Id = meeting.Id,
-                              StarHour = meeting.StarHour,
+                              StartHour = meeting.StartHour,
                               EndHour = meeting.EndHour,
                               UserId = meeting.UserId,
                               User = user,
@@ -59,7 +59,7 @@ namespace DataAccess.Repos
 
             var userId = meeting.UserId;
 
-            var dateStart = meeting.StarHour;
+            var dateStart = meeting.StartHour;
 
             var dateEnd = meeting.EndHour;
 
@@ -68,11 +68,11 @@ namespace DataAccess.Repos
             var resultHour = (dateEnd.Hour - dateStart.Hour);
 
             var haveMeeting = (from m in _dataBaseContext.Meeting
-                               where m.UserId == userId && m.StarHour == dateStart
+                               where m.UserId == userId && m.StartHour == dateStart
                                select m).Any();
 
             var repeathour = (from m in _dataBaseContext.Meeting
-                              where m.StarHour.Hour == dateStart.Hour && m.EndHour.Hour == dateEnd.Hour
+                              where m.StartHour.Hour == dateStart.Hour && m.EndHour.Hour == dateEnd.Hour
                               select m).Any();
 
             if (haveMeeting == false)

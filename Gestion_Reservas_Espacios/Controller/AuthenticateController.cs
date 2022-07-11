@@ -1,7 +1,11 @@
-﻿using Entities.Auth;
+﻿using DataAccess;
+using DataAccess.Repos;
+using Entities.Auth;
+using Gestion_Reservas_Espacios.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -15,17 +19,19 @@ namespace Gestion_Reservas_Espacios.Controller
     {
         //definimos los parametros con los que queremos trabajar, son metodos de una api para trabajar con user y roles
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUnitOfWork _uow;
         //private readonly RoleManager<IdentityUser> _roleManager;
         private readonly IConfiguration _configuration;//leer fichero de configuracion
 
         public AuthenticateController(
             UserManager<ApplicationUser> userManager,
             //RoleManager<IdentityUser> roleManager,
-            IConfiguration configuration)
+            IConfiguration configuration, IUnitOfWork uow)
         {
             _userManager = userManager;
             // _roleManager = roleManager;
             _configuration = configuration;
+            _uow = uow;
         }
 
         [HttpGet("{id}")]
@@ -34,6 +40,7 @@ namespace Gestion_Reservas_Espacios.Controller
             return await _userManager.FindByIdAsync(id);
         }
 
+                
         [HttpPost]
         [Route("login")]
         // endpooint que espera usuario y contraseña .. Loginmodel
@@ -94,6 +101,64 @@ namespace Gestion_Reservas_Espacios.Controller
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 
+        [HttpPut("Edit/{id}")]
+        
+        public async Task<IActionResult> Edit(string id, ApplicationUserDTO applicationUserDTO)
+        {
+            if (ModelState.IsValid)
+            {
+
+                try
+                {
+                    //await _uow.UsuariosRepository.Edit(usuario);
+                    return Ok(await _uow.UserRepository.Edit(id, applicationUserDTO));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_uow.UserRepository.ApplicationUserExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            else
+                return BadRequest(new { code = "InvalidModelState", message = "Error: ModelState inválido." });
+        }
+
+
+
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDTO resetPasswordDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var user = await _userManager.FindByEmailAsync(resetPasswordDTO.Email);
+            if (user == null)
+                return BadRequest("Invalid Request");
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var resetPassResult = await _userManager.ResetPasswordAsync(user, token, resetPasswordDTO.Password);
+            if (!resetPassResult.Succeeded)
+            {
+                var errors = resetPassResult.Errors.Select(e => e.Description);
+
+                return BadRequest(new { Errors = errors });
+            }
+
+            return Ok();
+        }
+
+        [HttpDelete("Delete/{id}")]
+       
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {            
+            return Ok(await _uow.UserRepository.DeleteConfirmed(id));
+        }
 
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)

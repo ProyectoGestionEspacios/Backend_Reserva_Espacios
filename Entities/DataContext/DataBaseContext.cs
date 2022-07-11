@@ -11,16 +11,16 @@ namespace Entities.DataContext
 {
     public class DataBaseContext : IdentityDbContext<ApplicationUser>
     {
-        public DataBaseContext(DbContextOptions<DataBaseContext> options) : base(options)
-        {
-        }
+       public DataBaseContext(DbContextOptions<DataBaseContext> options) : base(options)
+       {
+       }
 
         // dotnet ef migrations add Authentication. para pasar la cadena de migration en la consola dotnet ef migrations add Authentication, ejecutar y luego activar el constructor anterior
         //luego dotnet ef database update actualizamos la base de datos
 
         //protected override void OnConfiguring(DbContextOptionsBuilder dbContextOptionsBuilder)
         //{
-        //   dbContextOptionsBuilder.UseSqlServer("Data Source=DOMIRUS\\SQLEXPRESS;Initial Catalog=GestionEspaciosDB;Integrated Security=True");
+        //   dbContextOptionsBuilder.UseSqlServer("Data Source=DOMIRUS\\SQLEXPRESS;Initial Catalog=GestionReservasDB;Integrated Security=True");
         //}
 
 

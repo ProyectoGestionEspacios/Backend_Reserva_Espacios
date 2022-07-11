@@ -13,7 +13,7 @@ namespace Entities
 
         public string UserId { get; set; }
 
-        public DateTime StarHour { get; set; }
+        public DateTime StartHour { get; set; }
 
         public DateTime EndHour { get; set; }
 

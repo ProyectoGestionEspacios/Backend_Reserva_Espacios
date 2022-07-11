@@ -118,7 +118,7 @@ namespace Entities.Migrations
                     b.Property<DateTime>("EndHour")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("StarHour")
+                    b.Property<DateTime>("StartHour")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
